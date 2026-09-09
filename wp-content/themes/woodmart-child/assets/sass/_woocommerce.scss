@@ -1,0 +1,26 @@
+.woocommerce{
+
+}
+
+.area-sidebar-shop{
+  .widget{
+    margin-bottom:15px;
+    padding:15px;
+    background:#fff;
+    border-radius:0.2rem;
+  }
+
+  @media (min-width:992px){
+    padding-right:0;
+  }
+}
+
+.shop{
+  &-loop{
+    &-head{
+      background: #fff;
+      padding: 15px;
+      border-radius: 0.2rem;
+    }
+  }
+}

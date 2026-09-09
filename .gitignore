@@ -1,0 +1,87 @@
+# --- Secrets & environment ---
+wp-config.php
+.env
+.env.*
+!.env.example
+
+# --- WordPress core (not vendored — install same version from wordpress.org or copy from a full WP tree) ---
+/wp-admin/
+/wp-includes/
+/*.php
+!/wp-config-sample.php
+/license.txt
+/readme.html
+/.htaccess
+
+# --- Third-party plugins (only the custom POS-sync plugin is tracked) ---
+/wp-content/plugins/*
+!/wp-content/plugins/skifftech-pos-sync-for-woocommerce/
+!/wp-content/plugins/skifftech-pos-sync-for-woocommerce/**
+!/wp-content/plugins/index.php
+
+# Note: the POS-sync plugin's vendor/ is intentionally NOT ignored — see its
+# own .gitignore. There is no CI/build step for that plugin; committed
+# vendor/ is how its Composer dependencies get deployed.
+
+# Runtime CSV data dumps produced by the stock-sync feature — not source
+/wp-content/plugins/skifftech-pos-sync-for-woocommerce/*.csv
+/wp-content/plugins/skifftech-pos-sync-for-woocommerce.zip
+/wp-content/themes/woodmart-child/*.csv
+
+# --- Themes (only the child theme is tracked; Woodmart parent + WP default themes excluded) ---
+/wp-content/themes/*
+!/wp-content/themes/woodmart-child/
+!/wp-content/themes/woodmart-child/**
+
+# --- Theme build artifacts (if a build step is added later) ---
+/wp-content/themes/woodmart-child/node_modules/
+/wp-content/themes/woodmart-child/vendor/
+
+# --- WordPress runtime (regenerated / large / sensitive) ---
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/upgrade-temp-backup/
+wp-content/cache/
+wp-content/wp-cache-config.php
+wp-content/advanced-cache.php
+wp-content/_live/
+wp-content/maintenance/
+wp-content/mu-plugins/
+wp-content/ai1wm-backups/
+wp-content/backup-db/
+wp-content/backups/
+wp-content/et-cache/
+wp-content/litespeed/
+wp-content/blogs.dir/
+wp-content/debug.log
+wp-content/debug-log.php
+*.log
+error_log
+
+# --- Composer / Node (root-level, if added later) ---
+/vendor/
+node_modules/
+
+# --- JetBrains (PhpStorm, WebStorm, IDEA, Fleet) ---
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# --- VS Code ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# --- OS & misc ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+*.swp
+*.swo
+*~

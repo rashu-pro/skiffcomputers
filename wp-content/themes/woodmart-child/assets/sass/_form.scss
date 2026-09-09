@@ -1,0 +1,33 @@
+input{
+  &[type=text],
+  &[type=tel],
+  &[type=number],
+  &[type=email]{
+    border-color:#818181;
+    &:focus{
+      border-color:#022079;
+    }
+  }
+}
+
+textarea{
+  border-color:#818181;
+  &:focus{
+    border-color:#022079;
+  }
+}
+
+body{
+  .select2{
+    &-container{
+      &--default{
+        .select2-selection{
+          border-color:#818181;
+          &:focus{
+            border-color:#022079;
+          }
+        }
+      }
+    }
+  }
+}

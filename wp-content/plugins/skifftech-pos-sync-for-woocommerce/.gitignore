@@ -1,0 +1,27 @@
+# PhpStorm / JetBrains IDE
+.idea/
+*.iml
+*.iws
+out/
+
+# Other editors
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local env / secrets
+.env
+
+# NOTE: vendor/ is intentionally NOT ignored — there is no CI/build step for
+# this plugin, so committed vendor/ is how dependencies get deployed.
+#
+# NOTE: the generated OAuth2 RSA/encryption keys live under
+# wp-content/uploads/pos-sync-keys/, outside this plugin directory, so they
+# don't need a rule here.

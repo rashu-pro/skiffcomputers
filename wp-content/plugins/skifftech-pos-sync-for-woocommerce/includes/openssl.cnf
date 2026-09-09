@@ -1,0 +1,11 @@
+#
+# Minimal OpenSSL configuration bundled with the plugin so RSA key
+# generation works even when the host has no OPENSSL_CONF set
+# (common on Windows / Laragon). Passed explicitly to openssl_pkey_new().
+#
+[ req ]
+default_bits        = 2048
+default_md          = sha256
+distinguished_name  = req_distinguished_name
+
+[ req_distinguished_name ]

@@ -1,0 +1,109 @@
+.post-type-archive-product,
+.woodmart-archive-shop{
+  .main{
+    &-page{
+      &-wrapper{
+        background-color:$grey_whitish;
+      }
+    }
+  }
+}
+
+.area-sidebar-shop{
+  .widgettitle, .widget-title{
+    font-size:14px;
+    margin-bottom:10px;
+  }
+
+  .woodmart{
+    &-woocommerce{
+      &-layered-nav{
+        li{
+          margin-bottom:var(--li-mb);
+          &.wc-layered-nav-term{
+            .count{
+              display:none;
+            }
+            a{
+              &.layered-nav-link{
+                padding-top:0;
+                padding-bottom:0;
+              }
+              &:before{
+                content: "";
+                display: inline-block;
+                margin-top: -2px;
+                margin-right: 8px;
+                width: 17px;
+                height: 17px;
+                border: 2px solid $blue-dark;
+                vertical-align: middle;
+                transition: all .2s ease;
+                border-radius:0.15rem;
+
+              }
+              &:after{
+                position: absolute;
+                top: 7px;
+                left: 0;
+                color: #FFF;
+                font-weight: 600;
+                font-size: 8px;
+                opacity: 0;
+                content: "\f107";
+                font-family: "woodmart-font";
+              }
+            }
+
+            &.with-swatch-text{
+              a{
+                &:after{
+
+                }
+              }
+              .layer-term-name{
+                &:after{
+                  display:none;
+                }
+              }
+            }
+
+            &.chosen{
+              a{
+                &:before{
+                  background-color: $blue-dark;
+                  //border-color: var(--wd-primary-color);
+                }
+                &:after{
+                  opacity:1;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .wd-widget-stock-status{
+    a{
+      &:before{
+        width: 17px;
+        height: 17px;
+        border: 2px solid $blue-dark;
+        border-radius:0.15rem;
+      }
+      &:after{
+        top:5px;
+        left:5px;
+        font-size:8px;
+      }
+      &.wd-active{
+        &:before{
+          background-color: $blue-dark;
+        }
+      }
+    }
+  }
+
+}
