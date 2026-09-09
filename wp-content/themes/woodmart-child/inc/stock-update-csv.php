@@ -32,9 +32,11 @@ function get_csv_stock_row_count( $csv_file_path ) {
 
 /**
  * Update product stock and price from CSV file - batch processing.
- * The CSV's "price" column is written to the product's regular price. The
- * "sale_price" column is written to the product's sale price, but only when
- * it is lower than "price" - otherwise any existing sale price is cleared.
+ * The CSV's "stock" column only determines stock status (in stock if > 0,
+ * otherwise out of stock) - no stock quantity number is written. The "price"
+ * column is written to the product's regular price. The "sale_price" column
+ * is written to the product's sale price, but only when it is lower than
+ * "price" - otherwise any existing sale price is cleared.
  *
  * @param string $csv_file_path Path to the CSV file.
  * @param int    $offset       Row offset (0-based, after header).
@@ -205,7 +207,10 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 		$product_name = $product->get_name();
 
 		if ( ! $dry_run ) {
-			$product->set_stock_quantity( $stock_quantity );
+			// Managed stock would show the old tracked quantity number instead of a plain status.
+			if ( $product->get_manage_stock() ) {
+				$product->set_manage_stock( false );
+			}
 			$product->set_stock_status( $stock_quantity > 0 ? 'instock' : 'outofstock' );
 
 			if ( $csv_price !== '' && is_numeric( $csv_price ) ) {
@@ -242,7 +247,9 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 }
 
 /**
- * Update product stock and price (from the "price"/"sale_price" columns) from CSV file based on SKU (full file - use batch for large files)
+ * Update product stock status and price (from the "price"/"sale_price" columns) from CSV file based on SKU (full file - use batch for large files)
+ * The CSV's "stock" column only determines stock status (in stock if > 0,
+ * otherwise out of stock) - no stock quantity number is written.
  *
  * @param string $csv_file_path Path to the CSV file (relative to theme directory or absolute path)
  * @param bool   $dry_run       If true, only logs what would be updated without actually updating
@@ -407,14 +414,16 @@ function update_product_stock_from_csv( $csv_file_path = 'skiff-product-stock.cs
 			continue;
 		}
 
-		// Get current stock for logging
-		$current_stock = $product->get_stock_quantity();
+		// Get current stock status for logging
+		$current_stock_status = $product->get_stock_status();
 
 		if ( ! $dry_run ) {
-			// Update stock quantity
-			$product->set_stock_quantity( $stock_quantity );
+			// Managed stock would show the old tracked quantity number instead of a plain status.
+			if ( $product->get_manage_stock() ) {
+				$product->set_manage_stock( false );
+			}
 
-			// Set stock status based on quantity
+			// Set stock status based on quantity (no quantity number is stored)
 			if ( $stock_quantity > 0 ) {
 				$product->set_stock_status( 'instock' );
 			} else {
@@ -439,25 +448,27 @@ function update_product_stock_from_csv( $csv_file_path = 'skiff-product-stock.cs
 			$product->save();
 		}
 
+		$new_stock_status = $stock_quantity > 0 ? 'instock' : 'outofstock';
+
 		$results['updated']++;
 		$results['updated_products'][] = array(
-			'line'         => $line_number,
-			'sku'          => $sku,
-			'product_id'   => $product_id,
-			'product_name' => $product->get_name(),
-			'old_stock'    => $current_stock,
-			'new_stock'    => $stock_quantity,
+			'line'              => $line_number,
+			'sku'               => $sku,
+			'product_id'        => $product_id,
+			'product_name'      => $product->get_name(),
+			'old_stock_status'  => $current_stock_status,
+			'new_stock_status'  => $new_stock_status,
 		);
 
 		// Log the update
 		error_log(
 			sprintf(
-				'Stock update %s: SKU %s (Product ID: %d) - Stock: %d -> %d',
+				'Stock update %s: SKU %s (Product ID: %d) - Stock status: %s -> %s',
 				$dry_run ? '[DRY RUN]' : '',
 				$sku,
 				$product_id,
-				$current_stock,
-				$stock_quantity
+				$current_stock_status,
+				$new_stock_status
 			)
 		);
 	}
@@ -688,7 +699,7 @@ function render_stock_update_admin_page() {
 			<p>The CSV file should have the following columns:</p>
 			<ul>
 				<li><strong>sku</strong> - Product SKU (required, used for matching)</li>
-				<li><strong>stock</strong> - Stock quantity (required, numeric value)</li>
+				<li><strong>stock</strong> - Numeric value used only to set stock status: greater than 0 sets the product in stock, otherwise out of stock (required; no exact quantity is stored)</li>
 				<li><strong>price</strong> - Regular price, written to the product's regular price (optional, numeric value; skipped if blank or non-numeric)</li>
 				<li><strong>sale_price</strong> - Sale price, written to the product's sale price only when it's lower than "price" (optional; if it's not lower, or is blank/non-numeric, any existing sale price is cleared)</li>
 			</ul>

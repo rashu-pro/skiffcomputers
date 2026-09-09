@@ -82,6 +82,12 @@ class ProductPageSync
         $dirty = false;
 
         if (isset($item['stock']) && is_numeric($item['stock'])) {
+            // Managed stock would show the old tracked quantity number instead of a plain status.
+            if ($product->get_manage_stock()) {
+                $product->set_manage_stock(false);
+                $dirty = true;
+            }
+
             $stock_status = (float) $item['stock'] > 0 ? 'instock' : 'outofstock';
 
             if ($product->get_stock_status() !== $stock_status) {
