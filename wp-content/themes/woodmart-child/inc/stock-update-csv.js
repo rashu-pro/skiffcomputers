@@ -133,13 +133,14 @@
 	}
 
 	function buildReportCsv(reportRows) {
-		var headers = ['product_name', 'sku', 'price', 'is_updated', 'sku_found'];
+		var headers = ['product_name', 'sku', 'price', 'sale_price', 'is_updated', 'sku_found'];
 		var lines = [headers.join(',')];
 		reportRows.forEach(function(row) {
 			var cells = [
 				escapeCsvValue(row.product_name),
 				escapeCsvValue(row.sku),
 				escapeCsvValue(row.price),
+				escapeCsvValue(row.sale_price),
 				escapeCsvValue(row.is_updated),
 				escapeCsvValue(row.sku_found)
 			];

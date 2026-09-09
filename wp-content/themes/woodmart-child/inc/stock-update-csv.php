@@ -32,9 +32,9 @@ function get_csv_stock_row_count( $csv_file_path ) {
 
 /**
  * Update product stock and price from CSV file - batch processing.
- * The CSV's "price" column is purchase/cost price and is ignored; the
- * "sale price" column is the actual selling price and is written to the
- * product's regular price.
+ * The CSV's "price" column is written to the product's regular price. The
+ * "sale_price" column is written to the product's sale price, but only when
+ * it is lower than "price" - otherwise any existing sale price is cleared.
  *
  * @param string $csv_file_path Path to the CSV file.
  * @param int    $offset       Row offset (0-based, after header).
@@ -90,13 +90,19 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 		);
 	}
 
-	$header_lower     = array_map( 'strtolower', $header );
-	$sku_index        = array_search( 'sku', $header_lower );
-	$stock_index      = array_search( 'stock', $header_lower );
-	$name_index       = array_search( 'name', $header_lower );
-	// The CSV's "price" column is purchase/cost price - not used for the storefront price.
-	// "sale price" is the actual selling price and is written to the product's regular price.
-	$selling_price_index = array_search( 'sale price', $header_lower );
+	// Normalize so "sale_price" and "sale price" both match.
+	$header_normalized = array_map(
+		function( $cell ) {
+			return str_replace( '_', ' ', strtolower( trim( $cell ) ) );
+		},
+		$header
+	);
+	$sku_index    = array_search( 'sku', $header_normalized );
+	$stock_index  = array_search( 'stock', $header_normalized );
+	$name_index   = array_search( 'name', $header_normalized );
+	// "price" is the regular price. "sale_price" is only applied when lower than "price".
+	$price_index      = array_search( 'price', $header_normalized );
+	$sale_price_index = array_search( 'sale price', $header_normalized );
 
 	if ( $sku_index === false || $stock_index === false ) {
 		fclose( $handle );
@@ -114,8 +120,11 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 	if ( $name_index !== false ) {
 		$max_col = max( $max_col, $name_index );
 	}
-	if ( $selling_price_index !== false ) {
-		$max_col = max( $max_col, $selling_price_index );
+	if ( $price_index !== false ) {
+		$max_col = max( $max_col, $price_index );
+	}
+	if ( $sale_price_index !== false ) {
+		$max_col = max( $max_col, $sale_price_index );
 	}
 
 	// Skip to offset
@@ -143,8 +152,9 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 
 		$sku   = trim( $row[ $sku_index ] );
 		$stock = trim( $row[ $stock_index ] );
-		$csv_name          = $name_index !== false ? trim( $row[ $name_index ] ) : '';
-		$csv_selling_price = $selling_price_index !== false ? trim( $row[ $selling_price_index ] ) : '';
+		$csv_name       = $name_index !== false ? trim( $row[ $name_index ] ) : '';
+		$csv_price      = $price_index !== false ? trim( $row[ $price_index ] ) : '';
+		$csv_sale_price = $sale_price_index !== false ? trim( $row[ $sale_price_index ] ) : '';
 
 		if ( empty( $sku ) ) {
 			continue;
@@ -156,7 +166,8 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 			$results['report_rows'][]  = array(
 				'product_name' => $csv_name,
 				'sku'          => $sku,
-				'price'        => $csv_selling_price,
+				'price'        => $csv_price,
+				'sale_price'   => $csv_sale_price,
 				'is_updated'   => 'false',
 				'sku_found'    => 'false',
 			);
@@ -169,7 +180,8 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 			$results['report_rows'][]  = array(
 				'product_name' => $csv_name,
 				'sku'          => $sku,
-				'price'        => $csv_selling_price,
+				'price'        => $csv_price,
+				'sale_price'   => $csv_sale_price,
 				'is_updated'   => 'false',
 				'sku_found'    => 'false',
 			);
@@ -182,7 +194,8 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 			$results['report_rows'][] = array(
 				'product_name' => $csv_name,
 				'sku'          => $sku,
-				'price'        => $csv_selling_price,
+				'price'        => $csv_price,
+				'sale_price'   => $csv_sale_price,
 				'is_updated'   => 'false',
 				'sku_found'    => 'true',
 			);
@@ -195,8 +208,16 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 			$product->set_stock_quantity( $stock_quantity );
 			$product->set_stock_status( $stock_quantity > 0 ? 'instock' : 'outofstock' );
 
-			if ( $csv_selling_price !== '' && is_numeric( $csv_selling_price ) ) {
-				$product->set_regular_price( $csv_selling_price );
+			if ( $csv_price !== '' && is_numeric( $csv_price ) ) {
+				$product->set_regular_price( $csv_price );
+			}
+
+			if ( $sale_price_index !== false ) {
+				if ( $csv_sale_price !== '' && is_numeric( $csv_sale_price ) && is_numeric( $csv_price ) && floatval( $csv_sale_price ) < floatval( $csv_price ) ) {
+					$product->set_sale_price( $csv_sale_price );
+				} else {
+					$product->set_sale_price( '' );
+				}
 			}
 
 			$product->save();
@@ -206,7 +227,8 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 		$results['report_rows'][] = array(
 			'product_name' => $product_name,
 			'sku'          => $sku,
-			'price'        => $csv_selling_price,
+			'price'        => $csv_price,
+			'sale_price'   => $csv_sale_price,
 			'is_updated'   => 'true',
 			'sku_found'    => 'true',
 		);
@@ -220,7 +242,7 @@ function update_product_stock_from_csv_batch( $csv_file_path, $offset = 0, $batc
 }
 
 /**
- * Update product stock and price (from the "sale price" column) from CSV file based on SKU (full file - use batch for large files)
+ * Update product stock and price (from the "price"/"sale_price" columns) from CSV file based on SKU (full file - use batch for large files)
  *
  * @param string $csv_file_path Path to the CSV file (relative to theme directory or absolute path)
  * @param bool   $dry_run       If true, only logs what would be updated without actually updating
@@ -287,13 +309,18 @@ function update_product_stock_from_csv( $csv_file_path = 'skiff-product-stock.cs
 		);
 	}
 
-	// Find the index of SKU, stock, and sale price columns.
-	// The CSV's "price" column is purchase/cost price and is ignored; "sale price"
-	// is the actual selling price and is written to the product's regular price.
-	$header_lower         = array_map( 'strtolower', $header );
-	$sku_index            = array_search( 'sku', $header_lower );
-	$stock_index          = array_search( 'stock', $header_lower );
-	$selling_price_index  = array_search( 'sale price', $header_lower );
+	// Find the index of SKU, stock, price, and sale_price columns.
+	// "price" is the regular price. "sale_price" is only applied when lower than "price".
+	$header_normalized = array_map(
+		function( $cell ) {
+			return str_replace( '_', ' ', strtolower( trim( $cell ) ) );
+		},
+		$header
+	);
+	$sku_index         = array_search( 'sku', $header_normalized );
+	$stock_index       = array_search( 'stock', $header_normalized );
+	$price_index       = array_search( 'price', $header_normalized );
+	$sale_price_index  = array_search( 'sale price', $header_normalized );
 
 	if ( $sku_index === false ) {
 		fclose( $handle );
@@ -325,16 +352,20 @@ function update_product_stock_from_csv( $csv_file_path = 'skiff-product-stock.cs
 
 		// Skip empty rows
 		$max_col = max( $sku_index, $stock_index );
-		if ( $selling_price_index !== false ) {
-			$max_col = max( $max_col, $selling_price_index );
+		if ( $price_index !== false ) {
+			$max_col = max( $max_col, $price_index );
+		}
+		if ( $sale_price_index !== false ) {
+			$max_col = max( $max_col, $sale_price_index );
 		}
 		if ( empty( $row ) || count( $row ) <= $max_col ) {
 			continue;
 		}
 
-		$sku               = trim( $row[ $sku_index ] );
-		$stock             = trim( $row[ $stock_index ] );
-		$csv_selling_price = $selling_price_index !== false ? trim( $row[ $selling_price_index ] ) : '';
+		$sku            = trim( $row[ $sku_index ] );
+		$stock          = trim( $row[ $stock_index ] );
+		$csv_price      = $price_index !== false ? trim( $row[ $price_index ] ) : '';
+		$csv_sale_price = $sale_price_index !== false ? trim( $row[ $sale_price_index ] ) : '';
 
 		// Skip if SKU is empty
 		if ( empty( $sku ) ) {
@@ -390,9 +421,18 @@ function update_product_stock_from_csv( $csv_file_path = 'skiff-product-stock.cs
 				$product->set_stock_status( 'outofstock' );
 			}
 
-			// Update price from the CSV's "sale price" column (the actual selling price), if present
-			if ( $csv_selling_price !== '' && is_numeric( $csv_selling_price ) ) {
-				$product->set_regular_price( $csv_selling_price );
+			// "price" is written to the regular price.
+			if ( $csv_price !== '' && is_numeric( $csv_price ) ) {
+				$product->set_regular_price( $csv_price );
+			}
+
+			// "sale_price" is only applied when it's lower than "price"; otherwise clear any existing sale price.
+			if ( $sale_price_index !== false ) {
+				if ( $csv_sale_price !== '' && is_numeric( $csv_sale_price ) && is_numeric( $csv_price ) && floatval( $csv_sale_price ) < floatval( $csv_price ) ) {
+					$product->set_sale_price( $csv_sale_price );
+				} else {
+					$product->set_sale_price( '' );
+				}
 			}
 
 			// Save the product
@@ -649,9 +689,9 @@ function render_stock_update_admin_page() {
 			<ul>
 				<li><strong>sku</strong> - Product SKU (required, used for matching)</li>
 				<li><strong>stock</strong> - Stock quantity (required, numeric value)</li>
-				<li><strong>sale price</strong> - Selling price, written to the product's price (optional, numeric value; skipped if blank or non-numeric)</li>
+				<li><strong>price</strong> - Regular price, written to the product's regular price (optional, numeric value; skipped if blank or non-numeric)</li>
+				<li><strong>sale_price</strong> - Sale price, written to the product's sale price only when it's lower than "price" (optional; if it's not lower, or is blank/non-numeric, any existing sale price is cleared)</li>
 			</ul>
-			<p><em>Note: the CSV's "price" column is purchase/cost price and is not used to update the product.</em></p>
 			<p><strong>Note:</strong> Products are matched by SKU and updated in batches. Large files are processed automatically without timeout issues.</p>
 		</div>
 	</div>
