@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Skifftech POS Sync for WooCommerce
  * Description: Sync POS sales with WooCommerce using SKU. Inbound POS requests are authenticated via OAuth2 (Client Credentials + Refresh Token grants).
- * Version: 2.0.0
+ * Version: 2.1.1
  * Requires Plugins: woocommerce
  * Text Domain: pos-sync
  */
@@ -38,3 +38,9 @@ PosSync\Admin\ClientsPage::register();
  * See PosSync\Outbound\PortalClient / PosSync\Outbound\OrderSync.
  */
 PosSync\Outbound\OrderSync::register();
+
+/**
+ * Outbound: refresh a product's stock/price from the POS portal whenever
+ * its single product page is viewed. See PosSync\Outbound\ProductPageSync.
+ */
+PosSync\Outbound\ProductPageSync::register();

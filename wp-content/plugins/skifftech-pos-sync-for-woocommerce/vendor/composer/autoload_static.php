@@ -352,6 +352,7 @@ class ComposerStaticInit6e7d44960a845d4a738adf8982ba61ba
         'PosSync\\OAuth\\ServerFactory' => __DIR__ . '/../..' . '/includes/OAuth/ServerFactory.php',
         'PosSync\\Outbound\\OrderSync' => __DIR__ . '/../..' . '/includes/Outbound/OrderSync.php',
         'PosSync\\Outbound\\PortalClient' => __DIR__ . '/../..' . '/includes/Outbound/PortalClient.php',
+        'PosSync\\Outbound\\ProductPageSync' => __DIR__ . '/../..' . '/includes/Outbound/ProductPageSync.php',
         'PosSync\\Psr7Bridge' => __DIR__ . '/../..' . '/includes/Psr7Bridge.php',
         'PosSync\\Rest\\Authentication' => __DIR__ . '/../..' . '/includes/Rest/Authentication.php',
         'PosSync\\Rest\\ProductController' => __DIR__ . '/../..' . '/includes/Rest/ProductController.php',

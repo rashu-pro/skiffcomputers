@@ -265,6 +265,7 @@ return array(
     'PosSync\\OAuth\\ServerFactory' => $baseDir . '/includes/OAuth/ServerFactory.php',
     'PosSync\\Outbound\\OrderSync' => $baseDir . '/includes/Outbound/OrderSync.php',
     'PosSync\\Outbound\\PortalClient' => $baseDir . '/includes/Outbound/PortalClient.php',
+    'PosSync\\Outbound\\ProductPageSync' => $baseDir . '/includes/Outbound/ProductPageSync.php',
     'PosSync\\Psr7Bridge' => $baseDir . '/includes/Psr7Bridge.php',
     'PosSync\\Rest\\Authentication' => $baseDir . '/includes/Rest/Authentication.php',
     'PosSync\\Rest\\ProductController' => $baseDir . '/includes/Rest/ProductController.php',
