@@ -170,23 +170,35 @@
         }
       }
 
-      .add-to-cart-loop{
-        span{
-          transform:none!important;
-        }
-      }
-
+      // Show the cart icon and the text side by side instead of Woodmart's hover swap
       .wd-add-btn-replace{
         .add-to-cart-loop{
-          &:before{
-            display: inline-block;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 0 14px;
+
+          .wd-action-icon{
+            --wd-action-icon-size: 16px;
+            position: static;
+            display: inline-flex;
             transform: none;
-            position: relative;
-            //content:'\f0ca';
+          }
+
+          .wd-action-text{
+            padding: 5px 0;
+            transform: none;
+          }
+
+          &:hover{
+            .wd-action-icon,
+            .wd-action-text{
+              transform: none;
+            }
           }
 
           &.product_type_variable{
-            &:before{
+            .wd-action-icon{
               display: none;
             }
           }
@@ -206,6 +218,9 @@
           font-size:12px;
           font-weight:600;
           flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
           text-transform: uppercase;
           letter-spacing: .3px;
           border-radius:0.2rem;
@@ -214,9 +229,12 @@
           background-color: #E2F5FF;
           border:1px solid $blue-light;
           color:$blue-dark;
-          &:before{
-            padding-right:5px;
-            font-size:13px;
+
+          .wd-action-icon{
+            --wd-action-icon-size: 13px;
+            &:before{
+              color: inherit;
+            }
           }
           &:hover{
             //background-color:#e9a000;
@@ -255,9 +273,10 @@
       /* height: 36px; */
       padding: 10px 14px;
       border: 0;
-      &:before{
-        font-size:13px;
-        padding-right:5px;
+      gap: 5px;
+
+      .wd-action-text{
+        display: inline;
       }
       &:hover{
         //background-color:#e9a000;

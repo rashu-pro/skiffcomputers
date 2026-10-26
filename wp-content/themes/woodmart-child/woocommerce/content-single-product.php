@@ -268,7 +268,7 @@ if ( woodmart_get_opt( 'product_sticky' ) || woodmart_get_opt( 'product_summary_
 
 	<?php do_action( 'woodmart_after_product_tabs' ); ?>
 
-	<div class="<?php echo esc_attr( $container_class ); ?> related-and-upsells">
+	<div class="related-and-upsells">
 		<?php
 			/**
 			 * Hook woodmart_woocommerce_after_sidebar

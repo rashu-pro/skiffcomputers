@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*
  Theme Name:   Woodmart Child
  Description:  Woodmart Child Theme
@@ -96,7 +95,7 @@
   font-weight: 600;
   font-size: 8px;
   opacity: 0;
-  content: "";
+  content: "\f107";
   font-family: "woodmart-font";
 }
 .area-sidebar-shop .woodmart-woocommerce-layered-nav li.wc-layered-nav-term.with-swatch-text .layer-term-name:after {
@@ -237,15 +236,28 @@
 .wd-hover-standard .wd-action-btn, .wd-hover-standard-custom .wd-action-btn {
   flex: 1;
 }
-.wd-hover-standard .add-to-cart-loop span, .wd-hover-standard-custom .add-to-cart-loop span {
-  transform: none !important;
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
 }
-.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop:before, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop:before {
-  display: inline-block;
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop .wd-action-icon, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop .wd-action-icon {
+  --wd-action-icon-size: 16px;
+  position: static;
+  display: inline-flex;
   transform: none;
-  position: relative;
 }
-.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop.product_type_variable:before, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop.product_type_variable:before {
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop .wd-action-text, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop .wd-action-text {
+  padding: 5px 0;
+  transform: none;
+}
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop:hover .wd-action-icon,
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop:hover .wd-action-text, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop:hover .wd-action-icon,
+.wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop:hover .wd-action-text {
+  transform: none;
+}
+.wd-hover-standard .wd-add-btn-replace .add-to-cart-loop.product_type_variable .wd-action-icon, .wd-hover-standard-custom .wd-add-btn-replace .add-to-cart-loop.product_type_variable .wd-action-icon {
   display: none;
 }
 .wd-action-btn.wd-style-icon > a {
@@ -256,6 +268,9 @@
   font-size: 12px;
   font-weight: 600;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
   border-radius: 0.2rem;
@@ -263,9 +278,11 @@
   border: 1px solid #004367;
   color: #003049;
 }
-.wd-action-btn.wd-style-icon > a:before {
-  padding-right: 5px;
-  font-size: 13px;
+.wd-action-btn.wd-style-icon > a .wd-action-icon {
+  --wd-action-icon-size: 13px;
+}
+.wd-action-btn.wd-style-icon > a .wd-action-icon:before {
+  color: inherit;
 }
 .wd-action-btn.wd-style-icon > a:hover {
   background-color: #003049;
@@ -294,10 +311,10 @@
   /* height: 36px; */
   padding: 10px 14px;
   border: 0;
+  gap: 5px;
 }
-.btn-after-btn .wd-action-btn.wd-style-icon > a:before {
-  font-size: 13px;
-  padding-right: 5px;
+.btn-after-btn .wd-action-btn.wd-style-icon > a .wd-action-text {
+  display: inline;
 }
 .btn-after-btn .wd-action-btn.wd-style-icon > a:hover {
   background-color: #003049;
