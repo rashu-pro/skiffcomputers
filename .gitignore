@@ -52,6 +52,7 @@ wp-content/backup-db/
 wp-content/backups/
 wp-content/et-cache/
 wp-content/litespeed/
+wp-content/wf-logs/
 wp-content/blogs.dir/
 wp-content/debug.log
 wp-content/debug-log.php
