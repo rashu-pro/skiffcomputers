@@ -47,6 +47,30 @@ of re-typing hex values.
 }
 ```
 
+### 11.11 campaign tokens (CSS custom properties)
+
+The 11.11 Mega Sale page (`page-templates/template-offer-1111.php`) and the `[skiff_1111_countdown]`
+shortcode are styled directly in `style.css` (section "11.11 Mega Sale page"; no SCSS source). Tokens are
+scoped to `.skiff-1111` / `.skiff-1111-countdown`:
+
+| Token                | Value                 | Use                                                     |
+| -------------------- | --------------------- | -------------------------------------------------------- |
+| `--s11-red`          | `#DA2127` (= `$red_primary`) | Sale price, countdown, active category, buttons     |
+| `--s11-red-dark`     | `#9B171C` (= `$red_dark`)    | Countdown gradient end, summary highlights, "ended" text |
+| `--s11-purple`       | `#7B2CBF` (new)       | Start of the purple→red "Save: ৳X (-Y%)" badge gradient   |
+| `--s11-bg`           | `#F3F4F6`             | Page background (light grey) / mobile chip-bar backdrop  |
+| `--s11-surface`      | `#FFFFFF`             | Cards, hero, sidebar, terms box                          |
+| `--s11-text` / `--s11-muted` | `#1F2937` / `#6B7280` | Body text / secondary text, struck-through price  |
+| `--s11-border`       | `#E5E7EB`             | Chip borders, dividers                                   |
+| `--s11-tint`         | `#FEF2F2`             | Category hover / active background                       |
+| `--s11-radius`       | `8px`                 | Cards, hero, sidebar, countdown units                    |
+| `--s11-shadow`       | subtle two-layer shadow | Cards (stronger `--s11-shadow-hover` on hover)        |
+| `--skiff-1111-sticky-top` / `--skiff-1111-sticky-top-mobile` | `100px` / `0px` | Sticky offset of the category sidebar / mobile chip bar — override if the sticky header height changes |
+
+Bangla text (hero, countdown, terms) uses **Hind Siliguri** (Google Fonts), loaded only on the 11.11
+template or where the shortcode is used. Product grid: 4 columns ≥1200px, 3 columns 768–1199px, 2 columns
+<768px; the category sidebar becomes a horizontal sticky chip bar below 1024px.
+
 ---
 
 ## Typography & Layout

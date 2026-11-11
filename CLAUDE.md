@@ -105,6 +105,7 @@ sync via the `skifftech-pos-sync-for-woocommerce` plugin's REST API rather than 
 
 | Page | Template | Status |
 | ---- | -------- | ------ |
+| 11.11 Mega Sale (`/11-11`) | `page-templates/template-offer-1111.php` ("11.11 Offer") — logic in `inc/offer-1111.php`, CSV/WP-CLI helper in `inc/offer-1111-import.php`, settings under WooCommerce → 11.11 Campaign, CSS in `style.css` (no SCSS) | Built, campaign 11 Nov – 11 Dec 2026 |
 
 _(Add pages here as they are built)_
 

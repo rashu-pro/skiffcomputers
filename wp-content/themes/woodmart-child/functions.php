@@ -6,7 +6,7 @@
 require_once get_stylesheet_directory() . '/inc/_include.php';
 
 function woodmart_child_enqueue_styles() {
-	wp_enqueue_style( 'child-style', get_stylesheet_directory_uri() . '/style.css', array( 'woodmart-style' ), woodmart_get_theme_info( 'Version' ) );
+	wp_enqueue_style( 'child-style', get_stylesheet_directory_uri() . '/style.css', array( 'woodmart-style' ), '8.6.8' );
 	
 	// Enqueue custom script for inventory check
 	// wp_enqueue_script( 'pos-inventory-check', get_stylesheet_directory_uri() . '/js/pos-inventory.js', array( 'jquery' ), '1.0.0', true );
